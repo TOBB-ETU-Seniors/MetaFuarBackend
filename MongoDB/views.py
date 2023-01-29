@@ -1,7 +1,7 @@
-from json import dumps
+from json import dumps, loads
 from rest_framework.decorators import api_view
 from django.http.response import JsonResponse
-
+from bson import json_util
 
 from MongoDB.utils import connectToMongo
 from datetime import datetime
@@ -14,22 +14,18 @@ client = connectToMongo(password="seconduser")
 db = client["metafuar"]
 accs = db["Accounts"]
 
-@api_view(["GET", "PUT"])
+@api_view(["GET","POST"])
 def accountApi(request):
+    if request.method == "GET":
+        found_accs = accs.find({})
+        return JsonResponse(loads(json_util.dumps(list(found_accs))), safe=False)
+    elif request.method == "POST":
+        # id = accs.insert_one({
+        # "email_address": "alperdeneme@gmail.com",
+        # "login_type": "google",
+        # "creation_date": datetime.now()
+        # })
 
-    found_accs = accs.find({})
-    for acc in found_accs:
-        print(acc)
-    return JsonResponse(dumps(list(found_accs)), safe=False)
-
-
-@api_view(["POST"])
-def accountApi(request):
-    id = accs.insert_one({
-        "email_address": "alperdeneme@gmail.com",
-        "login_type": "google",
-        "creation_date": datetime.now()
-    })
-    # Change here verify post 
-    return JsonResponse(True, safe=False )
- 
+        print(json_util.dumps(request.data))
+        # Change here verify post 
+        return JsonResponse(True, safe=False )
