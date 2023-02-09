@@ -2,4 +2,5 @@ from django.urls import path
 
 from . import views
 
-urlpatterns = [path('',views.accountApi,name='accountApi'),]
+urlpatterns = [path('account',views.account,name='account'),
+               path("isUsernameAvailable/", views.isUsernameAvailable, name="isUsernameAvailable")]
