@@ -4,3 +4,4 @@ test_requests.py
 unityreqexample.cs
 MongoDB/__pycache__/
 *.pyc
+*.pyc
