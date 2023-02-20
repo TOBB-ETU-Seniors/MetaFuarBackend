@@ -59,9 +59,9 @@ def create_lobby(request):
     """
 
     id = lobbs.insert_one(Lobby(data).__dict__)
-    print(id)
+    print(id.inserted_id)
     # Change here verify post 
-    return JsonResponse(id, safe=False )
+    return JsonResponse(str(id.inserted_id), safe=False )
 
 # create lobby
 @api_view(["POST"])
@@ -78,6 +78,32 @@ def delete_lobby(request):
     # Change here verify post 
     return JsonResponse(True, safe=False )
 
+
+
+@api_view(["POST"])
+def update_lobby(request):
+    print("update_lobby endpoint has been reached")
+    data = request.data
+    """
+    request model
+     update_field,
+     new_value,
+     lobby_id
+    
+     
+    """
+
+    # TODO: verify field values
+    if data["update_field"] == "name":
+        lobbs.update_one({"_id": ObjectId(data["lobby_id"])}, {"$set":{"name": data["name"]}})
+    elif data["update_field"] == "max_user_count":
+        lobbs.update_one({"_id": ObjectId(data["lobby_id"])},{ "$set": {"max_user_count": data["max_user_count"]}})
+    elif data["update_field"] == "organization":
+        lobbs.update_one({"_id": ObjectId(data["lobby_id"])},{"$set": {"organization": data["organization"]}})
+    else:
+        return JsonResponse("Please give a valid update_field in body...", safe=False)
+    
+    return JsonResponse(True, safe=False)
 
 
 # add user to lobby
