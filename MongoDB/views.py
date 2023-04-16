@@ -9,13 +9,21 @@ from MongoDB.utils import connectToMongo
 from datetime import datetime
 from bson.objectid import ObjectId
 
+import json
 # Create your views here.
+
+def parse_json(data):
+    return json.loads(json_util.dumps(data))
+
 
 
 client = connectToMongo(password="seconduser")
 db = client["MetaFuarDB"]
 accs = db["Account"]
 lobbs = db["Lobby"]
+items = db["Items"]
+fair_items = db["FairItems"]
+inventories = db["Inventory"]
 
 @api_view(["GET","POST"])
 def account(request):
@@ -78,8 +86,6 @@ def delete_lobby(request):
     # Change here verify post 
     return JsonResponse(True, safe=False )
 
-
-
 @api_view(["POST"])
 def update_lobby(request):
     print("update_lobby endpoint has been reached")
@@ -112,12 +118,6 @@ def join_lobby(request):
     print("create_lobby endpoint has been reached")
     data = request.data
 
-    """
-    request model
-     user_id,
-     lobby_id
-    """
-
     try:
         old_lobby = lobbs.find_one({"_id": ObjectId(data["lobby_id"])})
         # check cur_user_count == max_user_count. if so, do not allow the operation
@@ -142,8 +142,6 @@ def join_lobby(request):
                     })
     #TODO: it can take id's as strings. What if they come as ObjectId objects? 
     return JsonResponse(True, safe=False )
-
-
 
 # add user to lobby
 @api_view(["POST"])
@@ -176,12 +174,89 @@ def exit_lobby(request):
     return JsonResponse(True, safe=False )
 
 
+# get all items
+@api_view(["GET"])
+def get_fair_items(request):
+    fair_items_list_ids = parse_json(fair_items.find({}))
+    # we will use this list to get specs of items in items list
+    ids = [x["item_id"] for x in fair_items_list_ids]
+    fair_items_list = []
+    for i in range(len(ids)):
+        res = items.find({"_id": ObjectId(ids[i]["$oid"])})
+        fair_items_list.append(parse_json(res))
+    
+    return JsonResponse(fair_items_list, safe=False)
+
+# get item details
+@api_view(["GET"])
+def get_item(request):
+    # expects id as string
+    id = request.GET["item_id"]
+    item = items.find({"_id": ObjectId(id)})
+    return JsonResponse(parse_json(item), safe = False)
 
     
+# add to users inventory
+@api_view(["POST"])
+def add_to_users_inventory(request):
+    """
+    request model
+    user_id,
+    item_id (from items table)
+    """
+    data = request.data
+    newobj = {"base_item": ObjectId(data["base_item"]), "eklenme_tarihi": datetime.now()}
+    res = inventories.update_one({"user": ObjectId(data["user"])}, {"$push":{"items":newobj}})
+    return JsonResponse(True, safe = False)
 
 
+# add item to inventory
+@api_view(["POST"])
+def add_to_inventory(request):
+    """
+    request model
+    inventory_id,
+    item_id (from items table)
+    """
+    data = request.data
+    newobj = {"base_item": ObjectId(data["base_item"]), "eklenme_tarihi": datetime.now()}
+    res = inventories.update_one({"_id": ObjectId(data["_id"])}, {"$push":{"items":newobj}})
+    return JsonResponse(True, safe = False)
 
 
+# remove item from user's inventory
+@api_view(["POST"])
+def remove_item_users_inventory(request):
+    """
+    request model
+    user_id,
+    item_id (from inventory items list)
+    """
+    data = request.data
+    res = inventories.update_one({"user": ObjectId(data["user"])}, {"$pull":{"items":{"base_item": ObjectId(data["base_item"])}}})
+    return JsonResponse(True, safe = False)
 
 
+# remove item from inventory
+@api_view(["POST"])
+def remove_item_inventory(request):
+    """
+    request model
+    inventory_id,
+    item_id (from inventory items list)
+    """
+    data = request.data
+    res = inventories.update_one({"_id": ObjectId(data["_id"])}, {"$pull":{"items":{"base_item": ObjectId(data["base_item"])}}})
+    return JsonResponse(True, safe = False)
 
+# update users balance
+@api_view(["POST"])
+def update_user_balance(request):
+    """
+    request_model
+    user_id
+    change_amount (can be -, +)
+    """
+    data = request.data
+    res = inventories.update_one({"user": ObjectId(data["user"])}, {"$inc": {"balance":data["change_amount"]}})
+    return JsonResponse(True, safe = False)
