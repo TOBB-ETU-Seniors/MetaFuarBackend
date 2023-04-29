@@ -183,8 +183,11 @@ def get_fair_items(request):
     fair_items_list = []
     for i in range(len(ids)):
         res = items.find({"_id": ObjectId(ids[i]["$oid"])})
-        fair_items_list.append(parse_json(res))
+        fair_items_list.extend(parse_json(res))
     
+    #here extract oid stuff from object
+    for item in fair_items_list:
+        item["_id"] = item["_id"]["$oid"]
     return JsonResponse(fair_items_list, safe=False)
 
 # get item details
