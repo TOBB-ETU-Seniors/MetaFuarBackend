@@ -46,6 +46,8 @@ def account(request):
     else:
         login_code = get_random_string(5)
         id = accs.insert_one(User(data,login_code).__dict__ )
+        # we should create an empty inventory as well
+        inventories.insert_one({"items": [], "balance":random.randint(1000,1500), "user": id.inserted_id})
     
     return JsonResponse(login_code, safe=False )
 
@@ -54,7 +56,7 @@ def verify_code(request):
     data = request.data
     found_acc = accs.find_one({"login_code": data["login_code"]})
     if bool(found_acc):
-        return JsonResponse(found_acc["user_name"], safe=False )
+        return JsonResponse(found_acc["email_address"], safe=False )
     else:
         return JsonResponse("Hesap bulunamadi. Kodu yanlis girmis olabilir misiniz ?", safe=False )
 
@@ -193,6 +195,21 @@ def exit_lobby(request):
     #TODO: it can take id's as strings. What if they come as ObjectId objects? 
     return JsonResponse(True, safe=False )
 
+# get all items
+@api_view(["GET"])
+def get_inventory(request):
+    id = request.GET["user_id"]
+    inv = inventories.find_one({"user": ObjectId(id)})
+    items_temp = inv["items"]
+    ids = [x["base_item"] for x in items_temp]
+    items_list = []
+    for id in ids:
+        items_list.append(parse_json(items.find_one({"_id": id})))
+    return_obj = {}
+    return_obj["items"] = items_list
+    return_obj["user_balance"] = inv["balance"]
+
+    return JsonResponse(return_obj, safe=False)
 
 # get all items
 @api_view(["GET"])
