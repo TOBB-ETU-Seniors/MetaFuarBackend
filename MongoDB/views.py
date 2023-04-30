@@ -2,6 +2,7 @@ from json import dumps, loads
 import random
 import string
 from django.http import HttpResponse
+from django.shortcuts import render
 from rest_framework.decorators import api_view
 from django.http.response import JsonResponse
 from bson import json_util
@@ -39,7 +40,7 @@ def get_random_string(length):
 
 @api_view(["GET"])
 def sslverif(request):
-    return HttpResponse("""1489D8D24063699DECE054889668141C52DBDBD4E0E655FD25D4EDECC4EE6D6F
+    return render("""1489D8D24063699DECE054889668141C52DBDBD4E0E655FD25D4EDECC4EE6D6F
 comodoca.com
 0128c4bf3e55553""",content_type='text/plain')
 
