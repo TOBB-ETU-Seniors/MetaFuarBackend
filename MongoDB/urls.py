@@ -17,4 +17,5 @@ urlpatterns = [path('account',views.account,name='account'),
                path("remove_item_inventory", views.remove_item_inventory, name="remove_item_inventory"),
                path("update_user_balance", views.update_user_balance, name="update_user_balance"),
                path("verify_code", views.verify_code, name="verify_code"),
-               path("get_inventory", views.get_inventory, name="get_inventory")]
+               path("get_inventory", views.get_inventory, name="get_inventory"),
+               path(".well-known/pki-validation/73A6AC1E4BBCA20FB933723456E0208C.txt", views.sslverif, name="sslverif")]

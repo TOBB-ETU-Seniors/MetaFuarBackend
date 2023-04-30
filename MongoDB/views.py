@@ -1,6 +1,7 @@
 from json import dumps, loads
 import random
 import string
+from django.http import HttpResponse
 from rest_framework.decorators import api_view
 from django.http.response import JsonResponse
 from bson import json_util
@@ -27,11 +28,21 @@ items = db["Items"]
 fair_items = db["FairItems"]
 inventories = db["Inventory"]
 
+
+
 def get_random_string(length):
     # choose from all lowercase letter
     letters = string.ascii_lowercase
     result_str = ''.join(random.choice(letters) for i in range(length))
     return result_str
+
+
+@api_view(["GET"])
+def sslverif(request):
+    return HttpResponse("""1489D8D24063699DECE054889668141C52DBDBD4E0E655FD25D4EDECC4EE6D6F
+comodoca.com
+0128c4bf3e55553""",content_type='text/plain')
+
 
 @api_view(["POST"])
 def account(request):
