@@ -1,4 +1,6 @@
 from json import dumps, loads
+import random
+import string
 from rest_framework.decorators import api_view
 from django.http.response import JsonResponse
 from bson import json_util
@@ -25,18 +27,36 @@ items = db["Items"]
 fair_items = db["FairItems"]
 inventories = db["Inventory"]
 
-@api_view(["GET","POST"])
+def get_random_string(length):
+    # choose from all lowercase letter
+    letters = string.ascii_lowercase
+    result_str = ''.join(random.choice(letters) for i in range(length))
+    return result_str
+
+@api_view(["POST"])
 def account(request):
-    if request.method == "GET":
-        # TODO: Implement social login and query login_id
-        found_accs = accs.find({})
-        return JsonResponse(loads(json_util.dumps(list(found_accs))), safe=False)
-    elif request.method == "POST":
-        data = request.data
-        id = accs.insert_one(User(data).__dict__)
-        print(id)
-        # Change here verify post 
-        return JsonResponse(True, safe=False )
+    data = request.data
+    found_acc = accs.find_one({"email_address": data["email"]})
+    if bool(found_acc):
+        # means that account is previously saved
+        # we need to generate new code and then update entry
+        login_code = get_random_string(5)
+        accs.update_one({"email_address": data["email"]}, {"$set":{"login_code": login_code}})
+
+    else:
+        login_code = get_random_string(5)
+        id = accs.insert_one(User(data,login_code).__dict__ )
+    
+    return JsonResponse(login_code, safe=False )
+
+@api_view(["POST"])
+def verify_code(request):
+    data = request.data
+    found_acc = accs.find_one({"login_code": data["login_code"]})
+    if bool(found_acc):
+        return JsonResponse(found_acc["user_name"], safe=False )
+    else:
+        return JsonResponse("Hesap bulunamadi. Kodu yanlis girmis olabilir misiniz ?", safe=False )
 
 
 @api_view(["POST"])

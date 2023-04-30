@@ -1,0 +1,24 @@
+Command name argument expected.
+
+[m[1mAvailable command groups for gcloud deploy:[m
+
+[m  [1mCI/CD[m
+      delivery-pipelines      Create and manage Delivery Pipeline resources for
+                              Google Cloud Deploy.
+      job-runs                Manages job runs resources for Google Cloud
+                              Deploy.
+      releases                Create and manage Release resources for Google
+                              Cloud Deploy.
+      rollouts                Create and manage Rollout resources for Google
+                              Cloud Deploy.
+      targets                 Create and manage Target resources for Google
+                              Cloud Deploy.
+
+[m[1mAvailable commands for gcloud deploy:[m
+
+      apply                   Applies a yaml configuration containing Deliver
+                              Pipeline(s), Target(s) declarative definitions.
+      delete                  Deletes delivery pipeline(s) and target(s) in a
+                              yaml configuration.
+
+[m

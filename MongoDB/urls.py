@@ -15,4 +15,5 @@ urlpatterns = [path('account',views.account,name='account'),
                path("add_to_inventory", views.add_to_inventory, name="add_to_inventory"),
                path("remove_item_users_inventory", views.remove_item_users_inventory, name="remove_item_users_inventory"),
                path("remove_item_inventory", views.remove_item_inventory, name="remove_item_inventory"),
-               path("update_user_balance", views.update_user_balance, name="update_user_balance")]
+               path("update_user_balance", views.update_user_balance, name="update_user_balance"),
+               path("verify_code", views.verify_code, name="verify_code")]
