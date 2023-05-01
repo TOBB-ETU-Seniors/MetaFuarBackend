@@ -65,8 +65,8 @@ def account(request):
 
 @api_view(["GET"])
 def verify_code(request):
-    data = request.data
-    found_acc = accs.find_one({"login_code": data["login_code"]})
+    
+    found_acc = accs.find_one({"login_code": request.GET["login_code"]})
     if bool(found_acc):
         return JsonResponse(found_acc["email_address"], safe=False )
     else:
