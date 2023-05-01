@@ -67,8 +67,9 @@ def account(request):
 def verify_code(request):
     
     found_acc = accs.find_one({"login_code": request.GET["login_code"]})
+    acc_obj = parse_json(found_acc)
     if bool(found_acc):
-        return JsonResponse((parse_json(found_acc))["_id"]["$oid"], safe=False )
+        return JsonResponse({"user_id": acc_obj["_id"]["$oid"], "user_name": acc_obj["user_name"]}, safe=False )
     else:
         return JsonResponse("Hesap bulunamadi. Kodu yanlis girmis olabilir misiniz ?", safe=False )
 
