@@ -305,7 +305,7 @@ def remove_item_inventory(request):
     return JsonResponse(True, safe = False)
 
 # update users balance
-@api_view(["POST"])
+@api_view(["GET"])
 def update_user_balance(request):
     """
     request_model
@@ -313,5 +313,5 @@ def update_user_balance(request):
     change_amount (can be -, +)
     """
     data = request.data
-    res = inventories.update_one({"user": ObjectId(data["user"])}, {"$inc": {"balance":data["change_amount"]}})
+    res = inventories.update_one({"user": ObjectId(request.GET["user"])}, {"$inc": {"balance":data["change_amount"]}})
     return JsonResponse(True, safe = False)
