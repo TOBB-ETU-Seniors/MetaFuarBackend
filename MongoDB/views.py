@@ -218,7 +218,7 @@ def get_inventory(request):
     for id in ids:
         items_list.append(parse_json(items.find_one({"_id": id})))
     for i in range(len(items_list)):
-        items_list[i]["id"] = items_list[i]["id"]["$oid"]
+        items_list[i]["_id"] = items_list[i]["_id"]["$oid"]
     
     return_obj = {}
     return_obj["items"] = items_list
