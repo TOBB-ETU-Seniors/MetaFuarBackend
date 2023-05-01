@@ -261,7 +261,7 @@ def add_to_users_inventory(request):
     """
     data = request.data
     newobj = {"base_item": ObjectId(request.GET["base_item"]), "eklenme_tarihi": datetime.now()}
-    res = inventories.update_one({"user": ObjectId(data["user"])}, {"$push":{"items":newobj}})
+    res = inventories.update_one({"user": ObjectId(request.GET["user"])}, {"$push":{"items":newobj}})
     return JsonResponse(True, safe = False)
 
 
