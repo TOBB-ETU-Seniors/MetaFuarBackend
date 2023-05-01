@@ -314,5 +314,5 @@ def update_user_balance(request):
     change_amount (can be -, +)
     """
     data = request.data
-    res = inventories.update_one({"user": ObjectId(request.GET["user"])}, {"$inc": {"balance":data["change_amount"]}})
+    res = inventories.update_one({"user": ObjectId(request.GET["user"])}, {"$inc": {"balance":request.GET["change_amount"]}})
     return JsonResponse(True, safe = False)
