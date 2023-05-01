@@ -258,7 +258,7 @@ def add_to_users_inventory(request):
     """
     request model
     user_id,
-    item_id (from items table)
+    item_id (from items table) 
     """
     data = request.data
     newobj = {"base_item": ObjectId(request.GET["base_item"]), "eklenme_tarihi": datetime.now()}
@@ -314,5 +314,5 @@ def update_user_balance(request):
     change_amount (can be -, +)
     """
     data = request.data
-    res = inventories.update_one({"user": ObjectId(request.GET["user"])}, {"$inc": {"balance":request.GET["change_amount"]}})
+    res = inventories.update_one({"user": ObjectId(request.GET["user"])}, {"$inc": {"balance":int(request.GET["change_amount"])}})
     return JsonResponse(True, safe = False)
