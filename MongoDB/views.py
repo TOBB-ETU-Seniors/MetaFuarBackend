@@ -63,7 +63,7 @@ def account(request):
     
     return JsonResponse(login_code, safe=False )
 
-@api_view(["POST"])
+@api_view(["GET"])
 def verify_code(request):
     data = request.data
     found_acc = accs.find_one({"login_code": data["login_code"]})
