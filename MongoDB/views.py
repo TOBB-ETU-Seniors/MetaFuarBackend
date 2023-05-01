@@ -252,7 +252,7 @@ def get_item(request):
 
     
 # add to users inventory
-@api_view(["POST"])
+@api_view(["GET"])
 def add_to_users_inventory(request):
     """
     request model
@@ -260,7 +260,7 @@ def add_to_users_inventory(request):
     item_id (from items table)
     """
     data = request.data
-    newobj = {"base_item": ObjectId(data["base_item"]), "eklenme_tarihi": datetime.now()}
+    newobj = {"base_item": ObjectId(request.GET["base_item"]), "eklenme_tarihi": datetime.now()}
     res = inventories.update_one({"user": ObjectId(data["user"])}, {"$push":{"items":newobj}})
     return JsonResponse(True, safe = False)
 
