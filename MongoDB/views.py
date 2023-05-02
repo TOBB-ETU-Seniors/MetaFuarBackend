@@ -281,7 +281,7 @@ def add_to_inventory(request):
 
 
 # remove item from user's inventory
-@api_view(["POST"])
+@api_view(["GET"])
 def remove_item_users_inventory(request):
     """
     request model
@@ -289,7 +289,7 @@ def remove_item_users_inventory(request):
     item_id (from inventory items list)
     """
     data = request.data
-    res = inventories.update_one({"user": ObjectId(data["user"])}, {"$pull":{"items":{"base_item": ObjectId(data["base_item"])}}})
+    res = inventories.update_one({"user": ObjectId(request.GET["user"])}, {"$pull":{"items":{"base_item": ObjectId(request.GET["base_item"])}}})
     return JsonResponse(True, safe = False)
 
 
